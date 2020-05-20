@@ -7,20 +7,13 @@ use Exception;
 class RequestBuilder
 {
     /**
-     * Unique Id
-     * @var string
-     */
-    private $id;
-
-    /**
      * Private key
      * @var string
      */
     private $privateKey;
 
-    public function __construct(string $id, string $privateKey)
+    public function __construct(string $privateKey)
     {
-        $this->id = $id;
         $this->privateKey = $privateKey;
     }
 
