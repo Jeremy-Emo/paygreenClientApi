@@ -24,11 +24,27 @@ class ApiClient
      */
     private $builder;
 
+    /**
+     * Last error code
+     * @var int|null
+     */
+    private $lastErrorCode;
+
     public function __construct(string $id, string $privateKey, string $baseUrl = '')
     {
         $this->id = $id;
         $this->builder = new RequestBuilder($privateKey);
         $this->setBaseUrl($baseUrl);
+        $this->lastErrorCode = null;
+    }
+
+    /**
+     * Getter for lastErrorCode, getting last Http Error Code
+     * @return int|null
+     */
+    public function getLastHttpErrorCode() : ?int
+    {
+        return $this->lastErrorCode;
     }
 
     /**
@@ -52,6 +68,7 @@ class ApiClient
                     error_log("PaygreenApiClient\ApiClient - getPaymentType : Error but no http code provided");
                     break;
             }
+            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
             return null;
         } else {
             return $apiResult['data'];
@@ -80,6 +97,7 @@ class ApiClient
                     error_log("PaygreenApiClient\ApiClient - getTransactionInfos : Error but no http code provided");
                     break;
             }
+            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
             return null;
         } else {
             return $apiResult['data'];
@@ -114,6 +132,7 @@ class ApiClient
                     error_log("PaygreenApiClient\ApiClient - validateTransaction : Error but no http code provided");
                     break;
             }
+            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
             return null;
         } else {
             return $apiResult['data'];
@@ -146,6 +165,7 @@ class ApiClient
                     error_log("PaygreenApiClient\ApiClient - modifyAmount : Error but no http code provided");
                     break;
             }
+            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
             return null;
         } else {
             return $apiResult['data'];
@@ -176,6 +196,7 @@ class ApiClient
                     error_log("PaygreenApiClient\ApiClient - refund : Error but no http code provided");
                     break;
             }
+            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
             return null;
         } else {
             return $apiResult['data'];
