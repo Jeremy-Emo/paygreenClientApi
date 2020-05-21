@@ -105,14 +105,22 @@ class RequestBuilder
                 'header'    =>  "Accept: application/json\r\n" .
                     "Content-Type: application/json\r\n".
                     "Authorization: Bearer " . $this->privateKey,
-                'content'   =>  $content
+                'content'   =>  $content,
+                'ignore_errors' => true,
             ]
         ];
         $context = stream_context_create($opts);
         try {
             $response = file_get_contents($url, false, $context);
+            $httpResponseStatus = $http_response_header[0] ?? null;
+            preg_match('{HTTP\/\S*\s(\d{3})}', $httpResponseStatus, $statusCode);
             if ($response === false) {
                 throw new Exception("can't get informations with fopen.");
+            } else if ($statusCode[1] !== 200) {
+                return [
+                    'error' => true,
+                    'httpCode' => $statusCode[1],
+                ];
             } else {
                 return [
                     'error' => false,
