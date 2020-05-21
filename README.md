@@ -1,9 +1,9 @@
-#Paygreen API Client
+# Paygreen API Client
 > Client PHP permettant l'intégration de l'API de Paygreen
 >
 > <a href="https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement">Documentation de l'API</a>
 
-##Utilisation
+## Utilisation
 
 ### 1) Instancier ApiClient :
 ```php
@@ -36,7 +36,7 @@ $client = new ApiClient($id, $pk, $url);
 $buyer = new Buyer('id du buyer', 'nom', 'prénom', 'email@exemple.fr', 'pays', 'nom entreprise');
 $card = new Card('token');
 
-$info = $obj->cashPayment(10000, "id commande", "EUR", $buyer, $card);
+$info = $client->cashPayment(10000, "id commande", "EUR", $buyer, $card);
 ```
 
 ### 3) Retour des méthodes
