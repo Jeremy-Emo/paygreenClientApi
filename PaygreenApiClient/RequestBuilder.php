@@ -12,6 +12,10 @@ class RequestBuilder
      */
     private $privateKey;
 
+    /**
+     * RequestBuilder constructor.
+     * @param string $privateKey
+     */
     public function __construct(string $privateKey)
     {
         $this->privateKey = $privateKey;
@@ -116,7 +120,7 @@ class RequestBuilder
             preg_match('{HTTP\/\S*\s(\d{3})}', $httpResponseStatus, $statusCode);
             if ($response === false) {
                 throw new Exception("can't get informations with fopen.");
-            } else if ($statusCode[1] !== 200) {
+            } else if ($statusCode[1] !== "200") {
                 return [
                     'error' => true,
                     'httpCode' => $statusCode[1],
