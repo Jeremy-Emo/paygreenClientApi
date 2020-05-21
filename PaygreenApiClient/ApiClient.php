@@ -58,6 +58,7 @@ class ApiClient
 
     /**
      * Request to API for getting Payment Types, return null if it fails
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-moyens-de-paiement%2Fpaths%2F~1api~1%7Bidentifiant%7D~1paymenttype%2Fget
      * @return array|null
      * @throws Exception
      */
@@ -66,21 +67,7 @@ class ApiClient
         $url = $this->baseUrl . "/" . $this->id . "/paymenttype";
         $apiResult = $this->builder->requestApi($url);
         if ($apiResult['error']) {
-            switch ($apiResult['httpCode']) {
-                case 400 :
-                    error_log("PaygreenApiClient\ApiClient - getPaymentType : Invalid ID " . $this->id);
-                    break;
-                case 404 :
-                    error_log("PaygreenApiClient\ApiClient - getPaymentType : PartnerConfig Not Found");
-                    break;
-                case false :
-                    error_log("PaygreenApiClient\ApiClient - getPaymentType : Error but no http code provided");
-                    break;
-                default :
-                    error_log("PaygreenApiClient\ApiClient - getPaymentType : Error http " . $apiResult['httpCode']);
-                    break;
-            }
-            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
+            $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
             return null;
         } else {
             return $apiResult['data'];
@@ -89,6 +76,7 @@ class ApiClient
 
     /**
      * Request to API for getting transaction $id informations, return null if it fails
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1%7Bid%7D%2Fget
      * @param string $id
      * @return array|null
      * @throws Exception
@@ -98,21 +86,7 @@ class ApiClient
         $url = $this->baseUrl . "/" . $this->id . "/payins/transaction/" . $id;
         $apiResult = $this->builder->requestApi($url);
         if ($apiResult['error']) {
-            switch ($apiResult['httpCode']) {
-                case 400 :
-                    error_log("PaygreenApiClient\ApiClient - getTransactionInfos : Invalid ID " . $this->id);
-                    break;
-                case 404 :
-                    error_log("PaygreenApiClient\ApiClient - getTransactionInfos : Transaction Not Found");
-                    break;
-                case false :
-                    error_log("PaygreenApiClient\ApiClient - getTransactionInfos : Error but no http code provided");
-                    break;
-                default :
-                    error_log("PaygreenApiClient\ApiClient - getTransactionInfos : Error http " . $apiResult['httpCode']);
-                    break;
-            }
-            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
+            $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
             return null;
         } else {
             return $apiResult['data'];
@@ -121,6 +95,7 @@ class ApiClient
 
     /**
      * Request to API for validate transaction $id, return null if it fails
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1%7Bid%7D%2Fput
      * @param string $id
      * @param int $amount these are cents not euros
      * @param string $message
@@ -136,21 +111,7 @@ class ApiClient
         ];
         $apiResult = $this->builder->requestApi($url, 'PUT', $data);
         if ($apiResult['error']) {
-            switch ($apiResult['httpCode']) {
-                case 400 :
-                    error_log("PaygreenApiClient\ApiClient - validateTransaction : Invalid ID " . $this->id);
-                    break;
-                case 404 :
-                    error_log("PaygreenApiClient\ApiClient - validateTransaction : Transaction Not Found");
-                    break;
-                case false :
-                    error_log("PaygreenApiClient\ApiClient - validateTransaction : Error but no http code provided");
-                    break;
-                default :
-                    error_log("PaygreenApiClient\ApiClient - validateTransaction : Error http " . $apiResult['httpCode']);
-                    break;
-            }
-            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
+            $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
             return null;
         } else {
             return $apiResult['data'];
@@ -159,6 +120,7 @@ class ApiClient
 
     /**
      * Request to API for modify amount of transaction $id, return null if it fails
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1%7Bid%7D%2Fpatch
      * @param string $id
      * @param int $amount these are cents not euros
      * @return array|null
@@ -172,21 +134,7 @@ class ApiClient
         ];
         $apiResult = $this->builder->requestApi($url, 'PATCH', $data);
         if ($apiResult['error']) {
-            switch ($apiResult['httpCode']) {
-                case 400 :
-                    error_log("PaygreenApiClient\ApiClient - modifyAmount : Invalid ID " . $this->id);
-                    break;
-                case 404 :
-                    error_log("PaygreenApiClient\ApiClient - modifyAmount : Transaction Not Found");
-                    break;
-                case false :
-                    error_log("PaygreenApiClient\ApiClient - modifyAmount : Error but no http code provided");
-                    break;
-                default :
-                    error_log("PaygreenApiClient\ApiClient - modifyAmount : Error http " . $apiResult['httpCode']);
-                    break;
-            }
-            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
+            $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
             return null;
         } else {
             return $apiResult['data'];
@@ -195,6 +143,7 @@ class ApiClient
 
     /**
      * Request to API for refund a transaction $id, return null if it fails
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1%7Bid%7D%2Fdelete
      * @param string $id
      * @param int|null $amount these are cents not euros
      * @return array|null
@@ -206,21 +155,7 @@ class ApiClient
         $data = ($amount !== null ? ['amount' => $amount] : null);
         $apiResult = $this->builder->requestApi($url, 'DELETE', $data);
         if ($apiResult['error']) {
-            switch ($apiResult['httpCode']) {
-                case 400 :
-                    error_log("PaygreenApiClient\ApiClient - refund : Invalid ID " . $this->id);
-                    break;
-                case 404 :
-                    error_log("PaygreenApiClient\ApiClient - refund : Transaction Not Found");
-                    break;
-                case false :
-                    error_log("PaygreenApiClient\ApiClient - refund : Error but no http code provided");
-                    break;
-                default :
-                    error_log("PaygreenApiClient\ApiClient - refund : Error http " . $apiResult['httpCode']);
-                    break;
-            }
-            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
+            $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
             return null;
         } else {
             return $apiResult['data'];
@@ -229,6 +164,7 @@ class ApiClient
 
     /**
      * Request to API for cash payment
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1cash%2Fpost
      * @param int $amount
      * @param string $orderId
      * @param string $currency
@@ -244,11 +180,12 @@ class ApiClient
             'buyer' => $buyer->castToArray(),
             'card' => $card->castToArray()
         ];
-        return $this->payment($amount, $orderId, $currency, 'cash', $additionalData);
+        return $this->payment(__FUNCTION__, $amount, $orderId, $currency, 'cash', $additionalData);
     }
 
     /**
      * Request to API for subscription payment
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1subscription%2Fpost
      * @param int $amount
      * @param string $orderId
      * @param string $currency
@@ -264,11 +201,12 @@ class ApiClient
             'orderDetails' => $orderDetails->castToArray(),
             'card' => $card->castToArray()
         ];
-        return $this->payment($amount, $orderId, $currency, 'subscription', $additionalData);
+        return $this->payment(__FUNCTION__, $amount, $orderId, $currency, 'subscription', $additionalData);
     }
 
     /**
      * Request to API for multiple times payment
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1xtime%2Fpost
      * @param int $amount
      * @param string $orderId
      * @param string $currency
@@ -284,11 +222,12 @@ class ApiClient
             'orderDetails' => $orderDetails->castToArray(),
             'card' => $card->castToArray()
         ];
-        return $this->payment($amount, $orderId, $currency, 'xtime', $additionalData);
+        return $this->payment(__FUNCTION__, $amount, $orderId, $currency, 'xtime', $additionalData);
     }
 
     /**
      * Request to API for payment with confirmation
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1tokenize%2Fpost
      * @param int $amount
      * @param string $orderId
      * @param string $currency
@@ -304,17 +243,100 @@ class ApiClient
             'orderDetails' => $buyer->castToArray(),
             'card' => $card->castToArray()
         ];
-        return $this->payment($amount, $orderId, $currency, 'tokenize', $additionalData);
+        return $this->payment(__FUNCTION__, $amount, $orderId, $currency, 'tokenize', $additionalData);
     }
 
     /**
      * Request to API for cancelling a payment
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1cancel%2Fpost
      * @return array|null
      */
     public function cancelPayment() : ?array
     {
         //TODO : implement method, documentation is inaccurate
         return null;
+    }
+
+    /**
+     * Request to API for cardprint creation
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/L'empreinte-de-carte%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1cardprint%2Fpost
+     * @param string $orderId
+     * @param Buyer $buyer
+     * @param array $additionalData
+     * @return array|null
+     * @throws Exception
+     */
+    public function newCardprint(string $orderId, Buyer $buyer, array $additionalData = []) : ?array
+    {
+        $url = $this->baseUrl . "/" . $this->id . "/payins/cardprint";
+        $data = [
+            'orderId' => $orderId,
+            'buyer' => $buyer->castToArray()
+        ];
+        $data += $additionalData;
+        $apiResult = $this->builder->requestApi($url, 'POST', $data);
+        if ($apiResult['error']) {
+            $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
+            return null;
+        } else {
+            return $apiResult['data'];
+        }
+    }
+
+    /**
+     * Request to API for getting cardprints
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/L'empreinte-de-carte%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1cardprint%2Fget
+     * @return array|null
+     * @throws Exception
+     */
+    public function getCardPrintList() : ?array
+    {
+        $url = $this->baseUrl . "/" . $this->id . "/payins/cardprint";
+        $apiResult = $this->builder->requestApi($url, 'GET');
+        if ($apiResult['error']) {
+            $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
+            return null;
+        } else {
+            return $apiResult['data'];
+        }
+    }
+
+    /**
+     * Request to API for getting cardprint $id informations
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/L'empreinte-de-carte%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1cardprint~1%7Bid%7D%2Fget
+     * @param string $id
+     * @return array|null
+     * @throws Exception
+     */
+    public function getCardPrintInfos(string $id) : ?array
+    {
+        $url = $this->baseUrl . "/" . $this->id . "/payins/cardprint" . $id;
+        $apiResult = $this->builder->requestApi($url, 'GET');
+        if ($apiResult['error']) {
+            $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
+            return null;
+        } else {
+            return $apiResult['data'];
+        }
+    }
+
+    /**
+     * Request to API for deleting cardprint $id
+     * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/L'empreinte-de-carte%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1cardprint~1%7Bid%7D%2Fdelete
+     * @param string $id
+     * @return array|null
+     * @throws Exception
+     */
+    public function deleteCardPrint(string $id) : ?array
+    {
+        $url = $this->baseUrl . "/" . $this->id . "/payins/cardprint" . $id;
+        $apiResult = $this->builder->requestApi($url, 'DELETE');
+        if ($apiResult['error']) {
+            $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
+            return null;
+        } else {
+            return $apiResult['data'];
+        }
     }
 
 
@@ -332,15 +354,16 @@ class ApiClient
 
     /**
      * Common method for payment
+     * @param string $methodForLogging
      * @param int $amount
      * @param string $orderId
      * @param string $currency
-     * @param array $additionalData
      * @param string $type
+     * @param array $additionalData
      * @return array|null
      * @throws Exception
      */
-    private function payment(int $amount, string $orderId, string $currency, string $type, array $additionalData = []) : ?array
+    private function payment(string $methodForLogging, int $amount, string $orderId, string $currency, string $type, array $additionalData = []) : ?array
     {
         $url = $this->baseUrl . "/" . $this->id . "/payins/transaction/";
         switch ($type) {
@@ -357,8 +380,8 @@ class ApiClient
                 $url .= "tokenize";
                 break;
             default:
-                error_log("PaygreenApiClient\ApiClient - payment : Invalid Argument for type of transaction.");
-                throw new Exception("PaygreenApiClient\ApiClient - payment : Invalid Argument for type of transaction.");
+                error_log(get_class($this) . " - " . __FUNCTION__ . " : Invalid Argument for type of transaction.");
+                throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : Invalid Argument for type of transaction.");
         }
         $data = [
             'orderId' => $orderId,
@@ -368,24 +391,15 @@ class ApiClient
         $data += $additionalData;
         $apiResult = $this->builder->requestApi($url, 'POST', $data);
         if ($apiResult['error']) {
-            switch ($apiResult['httpCode']) {
-                case 400 :
-                    error_log("PaygreenApiClient\ApiClient - payment : Invalid ID " . $this->id);
-                    break;
-                case 404 :
-                    error_log("PaygreenApiClient\ApiClient - payment : Transaction Not Found");
-                    break;
-                case false :
-                    error_log("PaygreenApiClient\ApiClient - payment : Error but no http code provided");
-                    break;
-                default :
-                    error_log("PaygreenApiClient\ApiClient - payment : Error http " . $apiResult['httpCode']);
-                    break;
-            }
-            $this->lastErrorCode = $apiResult['httpCode'] ?? null;
+            $this->loggingError($methodForLogging, $apiResult['httpCode']);
             return null;
         } else {
             return $apiResult['data'];
         }
+    }
+
+    private function loggingError(string $methodName, ?string $httpCode) {
+        error_log(get_class($this) . " - " . $methodName . " : HttpCode = " . ($httpCode ?? "not provided"));
+        $this->lastErrorCode = $apiResult['httpCode'] ?? null;
     }
 }
