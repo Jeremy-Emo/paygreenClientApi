@@ -56,3 +56,4 @@ Toutes les erreurs sont loguées sous le format suivant et stockées selon votre
 - Connexion OAuth
 - Tests unitaires
 - Intégration des autres API, seule la partie paiement est faite
+- Package composer
