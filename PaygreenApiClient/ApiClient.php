@@ -2,6 +2,7 @@
 
 namespace PaygreenApiClient;
 
+use Exception;
 use PaygreenApiClient\Client\CardprintClient;
 use PaygreenApiClient\Client\DonationClient;
 use PaygreenApiClient\Client\PaymentTypeClient;
@@ -24,7 +25,7 @@ class ApiClient
 
     /**
      * Private key
-     * @var string
+     * @var string|null
      */
     private $privateKey;
 
@@ -34,12 +35,17 @@ class ApiClient
     private $lastClientInstantiate;
 
     /**
+     * @var OAuthConnector|null
+     */
+    private $oauth;
+
+    /**
      * ApiClient constructor.
      * @param string $id
-     * @param string $privateKey
+     * @param string|null $privateKey
      * @param string $baseUrl
      */
-    public function __construct(string $id, string $privateKey, string $baseUrl = '')
+    public function __construct(string $id, ?string $privateKey = null, string $baseUrl = '')
     {
         $this->id = $id;
         $this->baseUrl = $baseUrl;
@@ -109,5 +115,41 @@ class ApiClient
             $this->lastClientInstantiate = new TransferClient($this->id, $this->privateKey, $this->baseUrl);
             return $this->lastClientInstantiate;
         }
+    }
+
+    /**
+     * @param string $email
+     * @param string $name
+     * @param string|null $phone
+     * @return ApiClient
+     * @throws Exception
+     */
+    public function initOAuth(string $email, string $name, ?string $phone = null) : self
+    {
+        $this->oauth = new OAuthConnector();
+        $this->oauth->generateKeys($this->baseUrl, $email, $name, $phone);
+
+        return $this;
+    }
+
+    /**
+     * @return OAuthConnector
+     */
+    public function getOAuthConnector() : OAuthConnector
+    {
+        return $this->oauth;
+    }
+
+    /**
+     * @param string $grantType
+     * @param string $code
+     * @return array|null
+     * @throws Exception
+     */
+    public function accessOAuth(string $grantType, string $code) : ?array
+    {
+        $data = $this->oauth->getDataPostAuth($this->baseUrl, $grantType, $code);
+        $this->privateKey = $data['data']['privateKey'] ?? null;
+        return $data;
     }
 }

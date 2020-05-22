@@ -2,6 +2,7 @@
 
 namespace PaygreenApiClient\Client;
 
+use Exception;
 use PaygreenApiClient\RequestBuilder;
 
 class GenericClient
@@ -33,11 +34,16 @@ class GenericClient
     /**
      * GenericClient constructor.
      * @param string $id
-     * @param string $privateKey
+     * @param string|null $privateKey
      * @param string $baseUrl
+     * @throws Exception
      */
-    public function __construct(string $id, string $privateKey, string $baseUrl)
+    public function __construct(string $id, ?string $privateKey = null, string $baseUrl = '')
     {
+        if($privateKey === null) {
+            error_log(get_class($this) . " - " . __FUNCTION__ . " : Private key not provided.");
+            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : Private key not provided.");
+        }
         $this->id = $id;
         $this->builder = new RequestBuilder($privateKey);
         $this->setBaseUrl($baseUrl);

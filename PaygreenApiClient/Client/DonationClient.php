@@ -9,10 +9,10 @@ class DonationClient extends GenericClient
     /**
      * DonationClient constructor.
      * @param string $id
-     * @param string $privateKey
+     * @param string|null $privateKey
      * @param string $baseUrl
      */
-    public function __construct(string $id, string $privateKey, string $baseUrl)
+    public function __construct(string $id, ?string $privateKey, string $baseUrl)
     {
         parent::__construct($id, $privateKey, $baseUrl);
     }

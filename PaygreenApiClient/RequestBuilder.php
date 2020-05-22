@@ -14,9 +14,9 @@ class RequestBuilder
 
     /**
      * RequestBuilder constructor.
-     * @param string $privateKey
+     * @param string|null $privateKey
      */
-    public function __construct(string $privateKey)
+    public function __construct(?string $privateKey = null)
     {
         $this->privateKey = $privateKey;
     }
@@ -56,7 +56,7 @@ class RequestBuilder
     private function requestWithCurl(string $url, string $verb, string $content) : array
     {
         $ch = curl_init();
-        curl_setopt_array($ch, [
+        $options = [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
@@ -67,11 +67,14 @@ class RequestBuilder
             CURLOPT_POSTFIELDS => $content,
             CURLOPT_HTTPHEADER => [
                 "accept: application/json",
-                "Authorization: Bearer " . $this->privateKey,
                 "cache-control: no-cache",
                 "content-type: application/json",
-            ],
-        ]);
+            ]
+        ];
+        if($this->privateKey !== null) {
+            $options[CURLOPT_HTTPHEADER][] = "Authorization: Bearer " . $this->privateKey;
+        }
+        curl_setopt_array($ch, $options);
 
         $response = curl_exec($ch);
 
@@ -108,7 +111,7 @@ class RequestBuilder
                 'method'    =>  $verb,
                 'header'    =>  "Accept: application/json\r\n" .
                     "Content-Type: application/json\r\n".
-                    "Authorization: Bearer " . $this->privateKey,
+                    ($this->privateKey !== null ? "Authorization: Bearer " . $this->privateKey : ""),
                 'content'   =>  $content,
                 'ignore_errors' => true,
             ]
