@@ -26,6 +26,7 @@ Certaines méthodes vont nécessiter d'instancier les classes du namespace Paygr
 use PaygreenApiClient\ApiClient;
 use PaygreenApiClient\Entity\Buyer;
 use PaygreenApiClient\Entity\Card;
+use PaygreenApiClient\Entity\Transaction;
 
 $pk = "clé privée";
 $url = "https://paygreen.fr";
@@ -36,7 +37,10 @@ $client = new ApiClient($id, $pk, $url);
 $buyer = new Buyer('id du buyer', 'nom', 'prénom', 'email@exemple.fr', 'pays', 'nom entreprise');
 $card = new Card('token');
 
-$info = $client->cashPayment(10000, "id commande", "EUR", $buyer, $card);
+$transaction = new Transaction(10000, "id commande", "EUR");
+$transaction->setBuyerAndCard($buyer, $card);
+
+$info = $client->cashPayment($transaction);
 ```
 
 ### 3) Retour des méthodes

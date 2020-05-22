@@ -6,6 +6,7 @@ use Exception;
 use PaygreenApiClient\Entity\Buyer;
 use PaygreenApiClient\Entity\Card;
 use PaygreenApiClient\Entity\OrderDetails;
+use PaygreenApiClient\Entity\Transaction;
 
 class ApiClient
 {
@@ -165,85 +166,65 @@ class ApiClient
     /**
      * Request to API for cash payment
      * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1cash%2Fpost
-     * @param int $amount
-     * @param string $orderId
-     * @param string $currency
-     * @param Buyer $buyer
-     * @param Card $card
-     * @param array $additionalData
+     * @param Transaction $transaction
      * @return array|null
      * @throws Exception
      */
-    public function cashPayment(int $amount, string $orderId, string $currency, Buyer $buyer, Card $card, array $additionalData = []) : ?array
+    public function cashPayment(Transaction $transaction) : ?array
     {
-        $additionalData += [
-            'buyer' => $buyer->castToArray(),
-            'card' => $card->castToArray()
-        ];
-        return $this->payment(__FUNCTION__, $amount, $orderId, $currency, 'cash', $additionalData);
+        if (!$transaction->testIfBuyerAndCardAreSet()) {
+            error_log(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
+            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
+        }
+        return $this->payment(__FUNCTION__, $transaction, 'cash');
     }
 
     /**
      * Request to API for subscription payment
      * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1subscription%2Fpost
-     * @param int $amount
-     * @param string $orderId
-     * @param string $currency
-     * @param OrderDetails $orderDetails
-     * @param Card $card
-     * @param array $additionalData
+     * @param Transaction $transaction
      * @return array|null
      * @throws Exception
      */
-    public function subscriptionPayment(int $amount, string $orderId, string $currency, OrderDetails $orderDetails, Card $card, array $additionalData = []) : ?array
+    public function subscriptionPayment(Transaction $transaction) : ?array
     {
-        $additionalData += [
-            'orderDetails' => $orderDetails->castToArray(),
-            'card' => $card->castToArray()
-        ];
-        return $this->payment(__FUNCTION__, $amount, $orderId, $currency, 'subscription', $additionalData);
+        if (!$transaction->testIfOrderDetailsAndCardAreSet()) {
+            error_log(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
+            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
+        }
+        return $this->payment(__FUNCTION__, $transaction, 'subscription');
     }
 
     /**
      * Request to API for multiple times payment
      * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1xtime%2Fpost
-     * @param int $amount
-     * @param string $orderId
-     * @param string $currency
-     * @param OrderDetails $orderDetails
-     * @param Card $card
-     * @param array $additionalData
+     * @param Transaction $transaction
      * @return array|null
      * @throws Exception
      */
-    public function xTimePayment(int $amount, string $orderId, string $currency, OrderDetails $orderDetails, Card $card, array $additionalData = []) : ?array
+    public function xTimePayment(Transaction $transaction) : ?array
     {
-        $additionalData += [
-            'orderDetails' => $orderDetails->castToArray(),
-            'card' => $card->castToArray()
-        ];
-        return $this->payment(__FUNCTION__, $amount, $orderId, $currency, 'xtime', $additionalData);
+        if (!$transaction->testIfOrderDetailsAndCardAreSet()) {
+            error_log(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
+            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
+        }
+        return $this->payment(__FUNCTION__, $transaction, 'xtime');
     }
 
     /**
      * Request to API for payment with confirmation
      * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/Les-transactions%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1transaction~1tokenize%2Fpost
-     * @param int $amount
-     * @param string $orderId
-     * @param string $currency
-     * @param Buyer $buyer
-     * @param Card $card
-     * @param array $additionalData
+     * @param Transaction $transaction
      * @return array|null
      * @throws Exception
      */
-    public function withConfirmationPayment(int $amount, string $orderId, string $currency, Buyer $buyer, Card $card, array $additionalData = []) : ?array
+    public function withConfirmationPayment(Transaction $transaction) : ?array
     {
-        $additionalData += [
-            'orderDetails' => $buyer->castToArray(),
-            'card' => $card->castToArray()
-        ];
-        return $this->payment(__FUNCTION__, $amount, $orderId, $currency, 'tokenize', $additionalData);
+        if (!$transaction->testIfBuyerAndCardAreSet()) {
+            error_log(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
+            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
+        }
+        return $this->payment(__FUNCTION__, $transaction, 'tokenize');
     }
 
     /**
@@ -487,15 +468,12 @@ class ApiClient
     /**
      * Common method for payment
      * @param string $methodForLogging
-     * @param int $amount
-     * @param string $orderId
-     * @param string $currency
+     * @param Transaction $transaction
      * @param string $type
-     * @param array $additionalData
      * @return array|null
      * @throws Exception
      */
-    private function payment(string $methodForLogging, int $amount, string $orderId, string $currency, string $type, array $additionalData = []) : ?array
+    private function payment(string $methodForLogging, Transaction $transaction, string $type) : ?array
     {
         $url = $this->baseUrl . "/" . $this->id . "/payins/transaction/";
         switch ($type) {
@@ -515,12 +493,7 @@ class ApiClient
                 error_log(get_class($this) . " - " . __FUNCTION__ . " : Invalid Argument for type of transaction.");
                 throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : Invalid Argument for type of transaction.");
         }
-        $data = [
-            'orderId' => $orderId,
-            'amount' => $amount,
-            'currency' => $currency
-        ];
-        $data += $additionalData;
+        $data = $transaction->castToArray();
         $apiResult = $this->builder->requestApi($url, 'POST', $data);
         if ($apiResult['error']) {
             $this->loggingError($methodForLogging, $apiResult['httpCode']);
