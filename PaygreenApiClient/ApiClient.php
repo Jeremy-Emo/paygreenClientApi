@@ -3,10 +3,7 @@
 namespace PaygreenApiClient;
 
 use Exception;
-use PaygreenApiClient\Entity\Buyer;
-use PaygreenApiClient\Entity\Card;
 use PaygreenApiClient\Entity\Fingerprint;
-use PaygreenApiClient\Entity\OrderDetails;
 use PaygreenApiClient\Entity\Transaction;
 
 class ApiClient
