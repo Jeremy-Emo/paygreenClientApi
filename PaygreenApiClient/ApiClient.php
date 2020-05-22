@@ -5,6 +5,7 @@ namespace PaygreenApiClient;
 use Exception;
 use PaygreenApiClient\Entity\Buyer;
 use PaygreenApiClient\Entity\Card;
+use PaygreenApiClient\Entity\Fingerprint;
 use PaygreenApiClient\Entity\OrderDetails;
 use PaygreenApiClient\Entity\Transaction;
 
@@ -241,20 +242,14 @@ class ApiClient
     /**
      * Request to API for cardprint creation
      * https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement#tag/L'empreinte-de-carte%2Fpaths%2F~1api~1%7Bidentifiant%7D~1payins~1cardprint%2Fpost
-     * @param string $orderId
-     * @param Buyer $buyer
-     * @param array $additionalData
+     * @param Fingerprint $fp
      * @return array|null
      * @throws Exception
      */
-    public function newCardprint(string $orderId, Buyer $buyer, array $additionalData = []) : ?array
+    public function newCardprint(Fingerprint $fp) : ?array
     {
         $url = $this->baseUrl . "/" . $this->id . "/payins/cardprint";
-        $data = [
-            'orderId' => $orderId,
-            'buyer' => $buyer->castToArray()
-        ];
-        $data += $additionalData;
+        $data = $fp->castToArray();
         $apiResult = $this->builder->requestApi($url, 'POST', $data);
         if ($apiResult['error']) {
             $this->loggingError(__FUNCTION__, $apiResult['httpCode']);
