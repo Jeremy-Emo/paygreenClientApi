@@ -16,7 +16,7 @@ $id = "identifiant paygreen";
 $client = new ApiClient($id, $pk, $url);
 ```
 
-### 2) Récupérer le client nécessaire à l'appel de l'API puis utiliser les méthodes de la classe
+### 2) Récupérer le sous-client nécessaire à l'appel de l'API puis utiliser les méthodes de la classe
 ```php
 $info = $client->getTransactionClient()->getTransactionInfos("id de la transaction");
 ```
