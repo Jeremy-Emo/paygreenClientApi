@@ -16,10 +16,16 @@ $id = "identifiant paygreen";
 $client = new ApiClient($id, $pk, $url);
 ```
 
-### 2) Utiliser les méthodes de la classe
+### 2) Récupérer le client nécessaire à l'appel de l'API puis utiliser les méthodes de la classe
 ```php
-$info = $client->getTransactionInfos("id de la transaction");
+$info = $client->getTransactionClient()->getTransactionInfos("id de la transaction");
 ```
+Il y a plusieurs clients à dispositions :
+- CardprintClient, pour les empreintes de carte
+- DonationClient, pour les dons
+- PaymentTypeClient, pour récupérer les types de paiement
+- TransactionClient, pour toute la gestion des transactions
+- TransferClient, pour les virements
 
 Certaines méthodes vont nécessiter d'instancier les classes du namespace PaygreenApiClient\Entity.
 ```php
@@ -40,13 +46,13 @@ $card = new Card('token');
 $transaction = new Transaction(10000, "id commande", "EUR");
 $transaction->setBuyerAndCard($buyer, $card);
 
-$info = $client->cashPayment($transaction);
+$info =  $client->getTransactionClient()->cashPayment($transaction);
 ```
 
 ### 3) Retour des méthodes
 Les méthodes ont deux retours potentiels : un tableau dans le cas où l'appel à l'API s'est bien passé ou null dans le cas contraire. Il est alors possible de récupérer le code HTTP d'erreur :
 ```php
-$client->getLastHttpErrorCode();
+$client->getTransactionClient()->getLastHttpErrorCode();
 ```
 Toutes les erreurs sont loguées sous le format suivant et stockées selon votre configuration de PHP : 
 
