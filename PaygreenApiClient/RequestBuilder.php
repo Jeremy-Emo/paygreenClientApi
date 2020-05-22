@@ -38,8 +38,8 @@ class RequestBuilder
         } else if (ini_get('allow_url_fopen')) {
             $result = $this->requestWithoutCurl($url, $verb, $content);
         } else {
-            error_log("PaygreenApiClient\RequestBuilder - requestApi : curl or fopen must be used.");
-            throw new Exception("PaygreenApiClient\RequestBuilder - requestApi : curl or fopen must be used.");
+            error_log(get_class($this) . " - " . __FUNCTION__ . " : curl or fopen must be used.");
+            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : curl or fopen must be used.");
         }
 
         return $result;
@@ -76,8 +76,8 @@ class RequestBuilder
         $response = curl_exec($ch);
 
         if ($curlError = curl_errno($ch)) {
-            error_log("PaygreenApiClient\RequestBuilder - requestWithCurl : curl error n°" . $curlError);
-            throw new Exception("PaygreenApiClient\RequestBuilder - requestWithCurl : curl error n°" . $curlError);
+            error_log(get_class($this) . " - " . __FUNCTION__ . " : curl error n°" . $curlError);
+            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : curl error n°" . $curlError);
         } else {
             switch ($httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                 case 200:
@@ -119,7 +119,7 @@ class RequestBuilder
             $httpResponseStatus = $http_response_header[0] ?? null;
             preg_match('{HTTP\/\S*\s(\d{3})}', $httpResponseStatus, $statusCode);
             if ($response === false) {
-                throw new Exception("can't get informations with fopen.");
+                throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : raised exception : can't get informations with fopen.");
             } else if ($statusCode[1] !== "200") {
                 return [
                     'error' => true,
@@ -132,7 +132,7 @@ class RequestBuilder
                 ];
             }
         } catch (Exception $e) {
-            error_log("PaygreenApiClient\RequestBuilder - requestWithoutCurl : raised exception : " . $e);
+            error_log($e);
             return [
                 'error' => true,
                 'httpCode' => false,
