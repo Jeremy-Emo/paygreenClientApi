@@ -51,3 +51,8 @@ $client->getLastHttpErrorCode();
 Toutes les erreurs sont loguées sous le format suivant et stockées selon votre configuration de PHP : 
 
 "Nom de la classe" - "nom de la méthode" : "erreur"
+
+## A faire
+- Connexion OAuth
+- Tests unitaires
+- Intégration des autres API, seule la partie paiement est faite
