@@ -1,0 +1,16 @@
+{
+  "name": "jemo/paygreen-api-client",
+  "description": "Client for Paygreen's API",
+  "require": {
+    "php": "^7.2"
+  },
+  "authors": [
+    {
+      "name" : "Jérémy Emo",
+      "email" : "jeremy-emo@hotmail.fr"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"PaygreenApiClient\\": "PaygreenApiClient/"}
+  }
+}
