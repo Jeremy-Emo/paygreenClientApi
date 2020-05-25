@@ -2,7 +2,7 @@
 
 namespace PaygreenApiClient;
 
-use Exception;
+use PaygreenApiClient\Exception\RequestException;
 
 class RequestBuilder
 {
@@ -27,7 +27,7 @@ class RequestBuilder
      * @param string $verb
      * @param array|null $data
      * @return array
-     * @throws Exception
+     * @throws RequestException
      */
     public function requestApi(string $url, string $verb = 'GET', ?array $data = null) : array
     {
@@ -39,7 +39,7 @@ class RequestBuilder
             $result = $this->requestWithoutCurl($url, $verb, $content);
         } else {
             error_log(get_class($this) . " - " . __FUNCTION__ . " : curl or fopen must be used.");
-            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : curl or fopen must be used.");
+            throw new RequestException(get_class($this) . " - " . __FUNCTION__ . " : curl or fopen must be used.");
         }
 
         return $result;
@@ -51,7 +51,7 @@ class RequestBuilder
      * @param string $verb
      * @param string $content
      * @return array
-     * @throws Exception
+     * @throws RequestException
      */
     private function requestWithCurl(string $url, string $verb, string $content) : array
     {
@@ -77,7 +77,7 @@ class RequestBuilder
 
         if ($curlError = curl_errno($ch)) {
             error_log(get_class($this) . " - " . __FUNCTION__ . " : curl error n°" . $curlError);
-            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : curl error n°" . $curlError);
+            throw new RequestException(get_class($this) . " - " . __FUNCTION__ . " : curl error n°" . $curlError);
         } else {
             switch ($httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                 case 200:
@@ -119,7 +119,7 @@ class RequestBuilder
             $httpResponseStatus = $http_response_header[0] ?? null;
             preg_match('{HTTP\/\S*\s(\d{3})}', $httpResponseStatus, $statusCode);
             if ($response === false) {
-                throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : raised exception : can't get informations with fopen.");
+                throw new RequestException(get_class($this) . " - " . __FUNCTION__ . " : raised exception : can't get informations with fopen.");
             } else if ($statusCode[1] !== "200") {
                 return [
                     'error' => true,
@@ -131,7 +131,7 @@ class RequestBuilder
                     'data' => json_decode($response, true)
                 ];
             }
-        } catch (Exception $e) {
+        } catch (RequestException $e) {
             error_log($e);
             return [
                 'error' => true,

@@ -4,6 +4,7 @@ namespace PaygreenApiClient\Client;
 
 use Exception;
 use PaygreenApiClient\Entity\Transaction;
+use PaygreenApiClient\Exception\DataException;
 
 class TransactionClient extends GenericClient
 {
@@ -117,7 +118,7 @@ class TransactionClient extends GenericClient
     {
         if (!$transaction->testIfBuyerAndCardAreSet()) {
             error_log(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
-            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
+            throw new DataException(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
         }
         return $this->payment(__FUNCTION__, $transaction, 'cash');
     }
@@ -133,7 +134,7 @@ class TransactionClient extends GenericClient
     {
         if (!$transaction->testIfOrderDetailsAndCardAreSet()) {
             error_log(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
-            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
+            throw new DataException(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
         }
         return $this->payment(__FUNCTION__, $transaction, 'subscription');
     }
@@ -149,7 +150,7 @@ class TransactionClient extends GenericClient
     {
         if (!$transaction->testIfOrderDetailsAndCardAreSet()) {
             error_log(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
-            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
+            throw new DataException(get_class($this) . " - " . __FUNCTION__ . " : orderDetails or card missing in Transaction object.");
         }
         return $this->payment(__FUNCTION__, $transaction, 'xtime');
     }
@@ -165,7 +166,7 @@ class TransactionClient extends GenericClient
     {
         if (!$transaction->testIfBuyerAndCardAreSet()) {
             error_log(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
-            throw new Exception(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
+            throw new DataException(get_class($this) . " - " . __FUNCTION__ . " : buyer or card missing in Transaction object.");
         }
         return $this->payment(__FUNCTION__, $transaction, 'tokenize');
     }
