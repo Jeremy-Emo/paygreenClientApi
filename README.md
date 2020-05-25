@@ -3,6 +3,11 @@
 >
 > <a href="https://paygreen.fr/documentation/api-documentation-categorie?cat=paiement">Documentation de l'API</a>
 
+## Installation
+```shell script
+composer require jemo/paygreen-api-client
+```
+
 ## Utilisation
 
 ### 1) Instancier ApiClient :
