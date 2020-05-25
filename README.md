@@ -5,7 +5,7 @@
 
 ## Installation
 ```shell script
-composer require jemo/paygreen-api-client
+composer require jemo/paygreen-api-client:dev-master
 ```
 
 ## Utilisation
